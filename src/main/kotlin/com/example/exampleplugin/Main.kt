@@ -1,8 +1,8 @@
-package net.trilleo.mc.plugins.trihunt
+package com.example.exampleplugin
 
-import net.trilleo.mc.plugins.trihunt.registration.CommandRegistrar
-import net.trilleo.mc.plugins.trihunt.registration.GUIManager
-import net.trilleo.mc.plugins.trihunt.registration.ListenerRegistrar
+import com.example.exampleplugin.registration.CommandRegistrar
+import com.example.exampleplugin.registration.GUIManager
+import com.example.exampleplugin.registration.ListenerRegistrar
 import org.bukkit.plugin.java.JavaPlugin
 
 class Main : JavaPlugin() {

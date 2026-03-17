@@ -1,4 +1,4 @@
-package net.trilleo.mc.plugins.trihunt.registration
+package com.example.exampleplugin.registration
 
 import org.bukkit.command.CommandSender
 
@@ -6,12 +6,12 @@ import org.bukkit.command.CommandSender
  * Base class for all plugin commands.
  *
  * Extend this class and place the subclass anywhere inside the
- * `net.trilleo.mc.plugins.trihunt.commands` package (or any subpackage) to
+ * `com.example.exampleplugin.commands` package (or any subpackage) to
  * have it automatically discovered and registered at startup.
  *
- * By default every command is registered as a **sub-command** of `/trihunt`
- * (alias `/th`). For example, a command with `name = "reload"` becomes
- * `/trihunt reload`. Set [isMainCommand] to `true` to register the command
+ * By default every command is registered as a **sub-command** of `/exampleplugin`
+ * (alias `/ep`). For example, a command with `name = "reload"` becomes
+ * `/exampleplugin reload`. Set [isMainCommand] to `true` to register the command
  * as a standalone top-level command instead.
  *
  * The class must have either:
@@ -19,18 +19,18 @@ import org.bukkit.command.CommandSender
  * - A constructor that accepts a single `JavaPlugin` parameter (the plugin
  *   instance will be injected automatically).
  *
- * Example (sub-command – registered as `/trihunt start`):
+ * Example (sub-command – registered as `/exampleplugin start`):
  * ```kotlin
- * package net.trilleo.mc.plugins.trihunt.commands.game
+ * package com.example.exampleplugin.commands.game
  *
  * class StartCommand : PluginCommand(
  *     name = "start",
- *     description = "Start the manhunt",
- *     usage = "/trihunt start",
- *     permission = "trihunt.start"
+ *     description = "Start the game",
+ *     usage = "/exampleplugin start",
+ *     permission = "exampleplugin.start"
  * ) {
  *     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
- *         sender.sendMessage("The hunt has begun!")
+ *         sender.sendMessage("The game has begun!")
  *         return true
  *     }
  * }
@@ -38,7 +38,7 @@ import org.bukkit.command.CommandSender
  *
  * Example (main command – registered as `/globaltool`):
  * ```kotlin
- * package net.trilleo.mc.plugins.trihunt.commands
+ * package com.example.exampleplugin.commands
  *
  * class GlobalToolCommand : PluginCommand(
  *     name = "globaltool",

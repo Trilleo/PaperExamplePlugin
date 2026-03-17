@@ -1,4 +1,4 @@
-package net.trilleo.mc.plugins.trihunt.registration
+package com.example.exampleplugin.registration
 
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File

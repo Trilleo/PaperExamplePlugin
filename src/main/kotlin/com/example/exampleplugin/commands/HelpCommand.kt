@@ -1,10 +1,10 @@
-package net.trilleo.mc.plugins.trihunt.commands
+package com.example.exampleplugin.commands
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
-import net.trilleo.mc.plugins.trihunt.registration.CommandRegistrar
-import net.trilleo.mc.plugins.trihunt.registration.PluginCommand
+import com.example.exampleplugin.registration.CommandRegistrar
+import com.example.exampleplugin.registration.PluginCommand
 import org.bukkit.command.CommandSender
 
 class HelpCommand : PluginCommand(
@@ -12,8 +12,8 @@ class HelpCommand : PluginCommand(
     description = "Show all available commands"
 ) {
     companion object {
-        // Matches the total width of the header: "========= TriHunt Commands ========="
-        private const val HEADER_WIDTH = 37
+        // Matches the total width of the header: "========= ExamplePlugin Commands ========="
+        private const val HEADER_WIDTH = 42
     }
 
     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
@@ -23,7 +23,7 @@ class HelpCommand : PluginCommand(
         sender.sendMessage(
             Component.text("=========", NamedTextColor.GOLD)
                 .append(
-                    Component.text(" TriHunt Commands ", NamedTextColor.GOLD)
+                    Component.text(" ExamplePlugin Commands ", NamedTextColor.GOLD)
                         .decorate(TextDecoration.BOLD)
                 )
                 .append(Component.text("=========", NamedTextColor.GOLD))
@@ -42,7 +42,7 @@ class HelpCommand : PluginCommand(
             // Commands in this category, sorted alphabetically
             for (info in commands) {
                 val commandText = if (info.isSubCommand) {
-                    "/trihunt ${info.command.name}"
+                    "/exampleplugin ${info.command.name}"
                 } else {
                     "/${info.command.name}"
                 }

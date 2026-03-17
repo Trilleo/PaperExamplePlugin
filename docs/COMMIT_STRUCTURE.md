@@ -1,4 +1,4 @@
-# TriHunt - Commit Structure
+# ExamplePlugin - Commit Structure
 
 To maintain a clean and organized codebase, all developers must follow the standardized commit message format. This ensures that changes to features are easy to track.
 
