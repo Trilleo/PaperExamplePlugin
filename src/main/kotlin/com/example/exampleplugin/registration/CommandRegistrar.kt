@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandMap
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -13,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin
  * Commands are split into two categories based on [PluginCommand.isMainCommand]:
  *
  * * **Sub-commands** (`isMainCommand = false`, the default) – registered under
- *   the `/exampleplugin` parent command (alias `/ep`).  A command with
+ *   the `/exampleplugin` parent command (alias `/ep`). A command with
  *   `name = "reload"` becomes `/exampleplugin reload`.
  * * **Main commands** (`isMainCommand = true`) – registered directly on the
  *   server [CommandMap] as standalone top-level commands.
@@ -24,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin
 object CommandRegistrar {
 
     private const val COMMANDS_PACKAGE = "com.example.exampleplugin.commands"
+    private const val ROOT_COMMAND = "exampleplugin"
 
     /** All registered sub-commands, keyed by their name (lower-case). */
     private val subCommands = mutableMapOf<String, PluginCommand>()
@@ -62,6 +64,9 @@ object CommandRegistrar {
      * standalone main command.
      */
     fun registerAll(plugin: JavaPlugin) {
+        subCommands.clear()
+        allCommands.clear()
+
         val commandClasses = PackageScanner.findClasses(
             plugin, COMMANDS_PACKAGE, PluginCommand::class.java
         )
@@ -74,6 +79,7 @@ object CommandRegistrar {
             try {
                 val command = instantiate(commandClass, plugin)
                 val category = extractCategory(commandClass)
+
                 if (command.isMainCommand) {
                     val bukkitCommand = createBukkitCommand(command)
                     commandMap.register(plugin.name.lowercase(), bukkitCommand)
@@ -81,9 +87,10 @@ object CommandRegistrar {
                     mainCount++
                 } else {
                     subCommands[command.name.lowercase()] = command
-                    plugin.logger.info("Registered sub-command: /exampleplugin ${command.name}")
+                    plugin.logger.info("Registered sub-command: /$ROOT_COMMAND ${command.name}")
                     subCount++
                 }
+
                 allCommands.add(RegisteredCommandInfo(command, category, !command.isMainCommand))
             } catch (e: Exception) {
                 plugin.logger.severe(
@@ -92,9 +99,19 @@ object CommandRegistrar {
             }
         }
 
-        // Register the /exampleplugin parent command (alias /ep)
-        val parentCommand = createParentCommand(plugin)
-        commandMap.register(plugin.name.lowercase(), parentCommand)
+        val parentCommand = plugin.getCommand(ROOT_COMMAND)
+        if (parentCommand == null) {
+            plugin.logger.severe("Command '$ROOT_COMMAND' is missing from plugin.yml")
+            return
+        }
+
+        parentCommand.setExecutor { sender, _, _, args ->
+            executeParentCommand(sender, args)
+        }
+
+        parentCommand.tabCompleter = TabCompleter { sender, _, _, args ->
+            tabCompleteParentCommand(sender, args)
+        }
 
         plugin.logger.info(
             "Registered $subCount sub-command(s) and $mainCount main command(s)"
@@ -121,79 +138,60 @@ object CommandRegistrar {
             } catch (_: NoSuchMethodException) {
                 throw IllegalArgumentException(
                     "${clazz.simpleName} must declare either a no-arg constructor " +
-                        "or a constructor accepting a single JavaPlugin parameter"
+                            "or a constructor accepting a single JavaPlugin parameter"
                 )
             }
         }
     }
 
-    /**
-     * Creates the `/exampleplugin` parent command that dispatches to sub-commands
-     * and provides tab-completion.
-     */
-    private fun createParentCommand(plugin: JavaPlugin): Command {
-        return object : Command(
-            "exampleplugin",
-            "Main command for the ExamplePlugin plugin",
-            "/exampleplugin <subcommand> [args]",
-            listOf("ep")
-        ) {
-            override fun execute(
-                sender: CommandSender,
-                commandLabel: String,
-                args: Array<out String>
-            ): Boolean {
-                if (args.isEmpty()) {
-                    sender.sendMessage("Usage: /exampleplugin <subcommand>")
-                    sender.sendMessage(
-                        "Available sub-commands: ${subCommands.keys.sorted().joinToString(", ")}"
-                    )
-                    return true
-                }
+    private fun executeParentCommand(sender: CommandSender, args: Array<out String>): Boolean {
+        if (args.isEmpty()) {
+            sender.sendMessage("Usage: /$ROOT_COMMAND <subcommand>")
+            sender.sendMessage(
+                "Available sub-commands: ${subCommands.keys.sorted().joinToString(", ")}"
+            )
+            return true
+        }
 
-                val subName = args[0].lowercase()
-                val subCommand = subCommands[subName]
-                if (subCommand == null) {
-                    sender.sendMessage("Unknown sub-command: ${args[0]}")
-                    sender.sendMessage(
-                        "Available sub-commands: ${subCommands.keys.sorted().joinToString(", ")}"
-                    )
-                    return true
-                }
+        val subName = args[0].lowercase()
+        val subCommand = subCommands[subName]
+        if (subCommand == null) {
+            sender.sendMessage("Unknown sub-command: ${args[0]}")
+            sender.sendMessage(
+                "Available sub-commands: ${subCommands.keys.sorted().joinToString(", ")}"
+            )
+            return true
+        }
 
-                // Check permission
-                subCommand.permission?.let { perm ->
-                    if (!sender.hasPermission(perm)) {
-                        sender.sendMessage("You do not have permission to use this command.")
-                        return true
-                    }
-                }
-
-                val subArgs = args.drop(1).toTypedArray()
-                return subCommand.execute(sender, subArgs)
-            }
-
-            override fun tabComplete(
-                sender: CommandSender,
-                alias: String,
-                args: Array<out String>
-            ): List<String> {
-                if (args.size == 1) {
-                    // Complete the sub-command name
-                    return subCommands.keys
-                        .filter { it.startsWith(args[0].lowercase()) }
-                        .sorted()
-                }
-                if (args.size >= 2) {
-                    // Delegate to the sub-command's tab completion
-                    val subName = args[0].lowercase()
-                    val subCommand = subCommands[subName] ?: return emptyList()
-                    val subArgs = args.drop(1).toTypedArray()
-                    return subCommand.tabComplete(sender, subArgs)
-                }
-                return emptyList()
+        subCommand.permission?.let { perm ->
+            if (!sender.hasPermission(perm)) {
+                sender.sendMessage("You do not have permission to use this command.")
+                return true
             }
         }
+
+        val subArgs = args.drop(1).toTypedArray()
+        return subCommand.execute(sender, subArgs)
+    }
+
+    private fun tabCompleteParentCommand(
+        sender: CommandSender,
+        args: Array<out String>
+    ): List<String> {
+        if (args.size == 1) {
+            return subCommands.keys
+                .filter { it.startsWith(args[0].lowercase()) }
+                .sorted()
+        }
+
+        if (args.size >= 2) {
+            val subName = args[0].lowercase()
+            val subCommand = subCommands[subName] ?: return emptyList()
+            val subArgs = args.drop(1).toTypedArray()
+            return subCommand.tabComplete(sender, subArgs)
+        }
+
+        return emptyList()
     }
 
     /**
@@ -201,9 +199,7 @@ object CommandRegistrar {
      *
      * Commands directly inside the `commands` package are categorised as
      * **"General"**; commands in a subpackage use the first subpackage
-     * segment, split on camelCase boundaries into title-cased words (e.g.
-     * `commands.game.StartCommand` → `"Game"`,
-     * `commands.roleManagement.AssignCommand` → `"Role Management"`).
+     * segment, split on camelCase boundaries into title-cased words.
      */
     private fun extractCategory(clazz: Class<*>): String {
         val packageName = clazz.name.substringBeforeLast('.', "")
@@ -218,8 +214,6 @@ object CommandRegistrar {
 
     /**
      * Converts a camelCase string into space-separated, title-cased words.
-     *
-     * Examples: `"game"` → `"Game"`, `"roleManagement"` → `"Role Management"`.
      */
     private fun formatCamelCase(input: String): String {
         return input
