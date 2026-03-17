@@ -1,9 +1,16 @@
 plugins {
     kotlin("jvm") version "2.3.10"
+    idea
 }
 
 group = "net.trilleo"
 version = "0.1.0"
+
+idea {
+    module {
+        isDownloadSources = true
+    }
+}
 
 repositories {
     mavenCentral()
