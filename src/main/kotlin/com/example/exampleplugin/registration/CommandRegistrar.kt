@@ -1,4 +1,4 @@
-package net.trilleo.mc.plugins.trihunt.registration
+package com.example.exampleplugin.registration
 
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -13,17 +13,17 @@ import org.bukkit.plugin.java.JavaPlugin
  * Commands are split into two categories based on [PluginCommand.isMainCommand]:
  *
  * * **Sub-commands** (`isMainCommand = false`, the default) – registered under
- *   the `/trihunt` parent command (alias `/th`).  A command with
- *   `name = "reload"` becomes `/trihunt reload`.
+ *   the `/exampleplugin` parent command (alias `/ep`).  A command with
+ *   `name = "reload"` becomes `/exampleplugin reload`.
  * * **Main commands** (`isMainCommand = true`) – registered directly on the
  *   server [CommandMap] as standalone top-level commands.
  *
- * The `/trihunt` command provides tab-completion for all registered
+ * The `/exampleplugin` command provides tab-completion for all registered
  * sub-commands automatically.
  */
 object CommandRegistrar {
 
-    private const val COMMANDS_PACKAGE = "net.trilleo.mc.plugins.trihunt.commands"
+    private const val COMMANDS_PACKAGE = "com.example.exampleplugin.commands"
 
     /** All registered sub-commands, keyed by their name (lower-case). */
     private val subCommands = mutableMapOf<String, PluginCommand>()
@@ -36,7 +36,7 @@ object CommandRegistrar {
      *
      * @property command      the underlying [PluginCommand] instance
      * @property category     display-friendly category derived from the source subpackage
-     * @property isSubCommand `true` when the command is a sub-command of `/trihunt`
+     * @property isSubCommand `true` when the command is a sub-command of `/exampleplugin`
      */
     data class RegisteredCommandInfo(
         val command: PluginCommand,
@@ -58,7 +58,7 @@ object CommandRegistrar {
 
     /**
      * Scans the commands package, instantiates every [PluginCommand] found,
-     * and registers it either as a sub-command of `/trihunt` or as a
+     * and registers it either as a sub-command of `/exampleplugin` or as a
      * standalone main command.
      */
     fun registerAll(plugin: JavaPlugin) {
@@ -81,7 +81,7 @@ object CommandRegistrar {
                     mainCount++
                 } else {
                     subCommands[command.name.lowercase()] = command
-                    plugin.logger.info("Registered sub-command: /trihunt ${command.name}")
+                    plugin.logger.info("Registered sub-command: /exampleplugin ${command.name}")
                     subCount++
                 }
                 allCommands.add(RegisteredCommandInfo(command, category, !command.isMainCommand))
@@ -92,7 +92,7 @@ object CommandRegistrar {
             }
         }
 
-        // Register the /trihunt parent command (alias /th)
+        // Register the /exampleplugin parent command (alias /ep)
         val parentCommand = createParentCommand(plugin)
         commandMap.register(plugin.name.lowercase(), parentCommand)
 
@@ -128,15 +128,15 @@ object CommandRegistrar {
     }
 
     /**
-     * Creates the `/trihunt` parent command that dispatches to sub-commands
+     * Creates the `/exampleplugin` parent command that dispatches to sub-commands
      * and provides tab-completion.
      */
     private fun createParentCommand(plugin: JavaPlugin): Command {
         return object : Command(
-            "trihunt",
-            "Main command for the TriHunt plugin",
-            "/trihunt <subcommand> [args]",
-            listOf("th")
+            "exampleplugin",
+            "Main command for the ExamplePlugin plugin",
+            "/exampleplugin <subcommand> [args]",
+            listOf("ep")
         ) {
             override fun execute(
                 sender: CommandSender,
@@ -144,7 +144,7 @@ object CommandRegistrar {
                 args: Array<out String>
             ): Boolean {
                 if (args.isEmpty()) {
-                    sender.sendMessage("Usage: /trihunt <subcommand>")
+                    sender.sendMessage("Usage: /exampleplugin <subcommand>")
                     sender.sendMessage(
                         "Available sub-commands: ${subCommands.keys.sorted().joinToString(", ")}"
                     )

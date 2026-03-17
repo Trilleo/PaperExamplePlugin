@@ -1,4 +1,4 @@
-package net.trilleo.mc.plugins.trihunt.registration
+package com.example.exampleplugin.registration
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -24,7 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 object GUIManager : Listener {
 
-    private const val GUIS_PACKAGE = "net.trilleo.mc.plugins.trihunt.guis"
+    private const val GUIS_PACKAGE = "com.example.exampleplugin.guis"
 
     private val guis = mutableMapOf<String, PluginGUI>()
     private val openGUIs = mutableMapOf<Player, Pair<PluginGUI, Inventory>>()

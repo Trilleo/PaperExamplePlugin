@@ -1,16 +1,16 @@
-# TriHunt - Developer Guide
+# ExamplePlugin - Developer Guide
 
-This guide explains how to create **commands**, **listeners**, and **GUIs** using TriHunt's registration system. All three follow the same pattern: extend a base class (or implement an interface), place the file in the correct package, and the plugin handles the rest automatically at startup.
+This guide explains how to create **commands**, **listeners**, and **GUIs** using ExamplePlugin's registration system. All three follow the same pattern: extend a base class (or implement an interface), place the file in the correct package, and the plugin handles the rest automatically at startup.
 
 ## How Auto-Registration Works
 
-TriHunt uses a `PackageScanner` to discover classes at runtime. When the plugin starts, it scans specific packages for concrete (non-abstract) classes and registers them automatically. You never need to edit `plugin.yml` or manually wire anything up.
+ExamplePlugin uses a `PackageScanner` to discover classes at runtime. When the plugin starts, it scans specific packages for concrete (non-abstract) classes and registers them automatically. You never need to edit `plugin.yml` or manually wire anything up.
 
 | System   | Base Class / Interface | Package                                          |
 |:---------|:-----------------------|:-------------------------------------------------|
-| Commands | `PluginCommand`        | `net.trilleo.mc.plugins.trihunt.commands`        |
-| Listeners| `Listener`             | `net.trilleo.mc.plugins.trihunt.listeners`       |
-| GUIs     | `PluginGUI`            | `net.trilleo.mc.plugins.trihunt.guis`            |
+| Commands | `PluginCommand`        | `com.example.exampleplugin.commands`             |
+| Listeners| `Listener`             | `com.example.exampleplugin.listeners`            |
+| GUIs     | `PluginGUI`            | `com.example.exampleplugin.guis`                 |
 
 Subpackages are also scanned, so you can freely organize classes into folders like `commands/game/`, `listeners/player/`, or `guis/menus/`.
 
@@ -31,13 +31,13 @@ The plugin instance is injected automatically when a `JavaPlugin` constructor is
 
 To create a command, extend `PluginCommand` and place the class anywhere inside the `commands` package or a subpackage.
 
-By default every command is registered as a **sub-command** of `/trihunt` (alias `/th`). For example, a command with `name = "reload"` becomes `/trihunt reload`. Set `isMainCommand = true` to register the command as a standalone top-level command instead.
+By default every command is registered as a **sub-command** of `/exampleplugin` (alias `/ep`). For example, a command with `name = "reload"` becomes `/exampleplugin reload`. Set `isMainCommand = true` to register the command as a standalone top-level command instead.
 
-When a player types `/trihunt` in-game, tab-completion automatically lists all available sub-commands.
+When a player types `/exampleplugin` in-game, tab-completion automatically lists all available sub-commands.
 
 ### Categories
 
-Commands are automatically categorised based on their **subpackage** (folder) inside the `commands` package. The category is used by the built-in `/trihunt help` command to group commands for display.
+Commands are automatically categorised based on their **subpackage** (folder) inside the `commands` package. The category is used by the built-in `/exampleplugin help` command to group commands for display.
 
 | Command Location                       | Category    |
 |:---------------------------------------|:------------|
@@ -47,14 +47,14 @@ Commands are automatically categorised based on their **subpackage** (folder) in
 
 ### Help Command
 
-The plugin ships with a built-in `/trihunt help` command. It lists every registered command grouped by category, sorted alphabetically within each group, and formatted with colours for readability. Every command should provide a meaningful `description` so the help output is informative.
+The plugin ships with a built-in `/exampleplugin help` command. It lists every registered command grouped by category, sorted alphabetically within each group, and formatted with colours for readability. Every command should provide a meaningful `description` so the help output is informative.
 
 ### PluginCommand Properties
 
 | Property        | Type           | Default        | Description                                                                 |
 |:----------------|:---------------|:---------------|:----------------------------------------------------------------------------|
-| `name`          | `String`       | *(required)*   | The command name (e.g. `"reload"` for `/trihunt reload`)                    |
-| `description`   | `String`       | `""`           | A brief description shown in `/trihunt help` — always provide one           |
+| `name`          | `String`       | *(required)*   | The command name (e.g. `"reload"` for `/exampleplugin reload`)                    |
+| `description`   | `String`       | `""`           | A brief description shown in `/exampleplugin help` — always provide one           |
 | `usage`         | `String`       | `"/<command>"` | Usage hint shown when the command fails                                     |
 | `aliases`       | `List<String>` | `emptyList()`  | Alternative names for the command (applicable to main commands only)         |
 | `permission`    | `String?`      | `null`         | Permission node required to use the command                                 |
@@ -69,20 +69,20 @@ The plugin ships with a built-in `/trihunt help` command. It lists every registe
 
 ### Example (Sub-Command)
 
-This command is registered as `/trihunt ping` (the default behavior):
+This command is registered as `/exampleplugin ping` (the default behavior):
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.commands
+package com.example.exampleplugin.commands
 
-import net.trilleo.mc.plugins.trihunt.registration.PluginCommand
+import com.example.exampleplugin.registration.PluginCommand
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class PingCommand : PluginCommand(
     name = "ping",
     description = "Check your latency",
-    usage = "/trihunt ping",
-    permission = "trihunt.ping"
+    usage = "/exampleplugin ping",
+    permission = "exampleplugin.ping"
 ) {
     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
         if (sender !is Player) {
@@ -97,26 +97,26 @@ class PingCommand : PluginCommand(
 
 ### Example with Tab Completion (Sub-Command)
 
-This command is registered as `/trihunt team`:
+This command is registered as `/exampleplugin team`:
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.commands.game
+package com.example.exampleplugin.commands.game
 
-import net.trilleo.mc.plugins.trihunt.registration.PluginCommand
+import com.example.exampleplugin.registration.PluginCommand
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class TeamCommand : PluginCommand(
     name = "team",
     description = "Join a team",
-    usage = "/trihunt team <hunters|runners>",
-    permission = "trihunt.team"
+    usage = "/exampleplugin team <hunters|runners>",
+    permission = "exampleplugin.team"
 ) {
     private val teams = listOf("hunters", "runners")
 
     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
         if (args.isEmpty() || args[0] !in teams) {
-            sender.sendMessage("Usage: /trihunt team <hunters|runners>")
+            sender.sendMessage("Usage: /exampleplugin team <hunters|runners>")
             return false
         }
         sender.sendMessage("You joined the ${args[0]} team!")
@@ -134,19 +134,19 @@ class TeamCommand : PluginCommand(
 
 ### Example with Plugin Instance (Sub-Command)
 
-This command is registered as `/trihunt reload`:
+This command is registered as `/exampleplugin reload`:
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.commands
+package com.example.exampleplugin.commands
 
-import net.trilleo.mc.plugins.trihunt.registration.PluginCommand
+import com.example.exampleplugin.registration.PluginCommand
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 
 class ReloadCommand(private val plugin: JavaPlugin) : PluginCommand(
     name = "reload",
     description = "Reload the plugin configuration",
-    permission = "trihunt.reload"
+    permission = "exampleplugin.reload"
 ) {
     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
         plugin.reloadConfig()
@@ -162,9 +162,9 @@ Set `isMainCommand = true` to register a standalone top-level command.
 This command is registered as `/globaltool`:
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.commands
+package com.example.exampleplugin.commands
 
-import net.trilleo.mc.plugins.trihunt.registration.PluginCommand
+import com.example.exampleplugin.registration.PluginCommand
 import org.bukkit.command.CommandSender
 
 class GlobalToolCommand : PluginCommand(
@@ -193,7 +193,7 @@ Annotate each event handler method with `@EventHandler`. The method must accept 
 ### Example
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.listeners
+package com.example.exampleplugin.listeners
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -213,7 +213,7 @@ class JoinListener : Listener {
 ### Example with Subpackage and Plugin Instance
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.listeners.player
+package com.example.exampleplugin.listeners.player
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -256,7 +256,7 @@ To create a GUI (chest-based inventory menu), extend `PluginGUI` and place the c
 Use `GUIManager.open(player, id)` to open a registered GUI for a player:
 
 ```kotlin
-import net.trilleo.mc.plugins.trihunt.registration.GUIManager
+import com.example.exampleplugin.registration.GUIManager
 
 // Returns true if the GUI was found and opened, false otherwise
 GUIManager.open(player, "settings")
@@ -265,9 +265,9 @@ GUIManager.open(player, "settings")
 ### Example
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.guis
+package com.example.exampleplugin.guis
 
-import net.trilleo.mc.plugins.trihunt.registration.PluginGUI
+import com.example.exampleplugin.registration.PluginGUI
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -299,20 +299,20 @@ class SettingsGUI : PluginGUI(
 
 ### Opening a GUI from a Command
 
-A common pattern is opening a GUI when a player runs a command. This command is registered as `/trihunt settings`:
+A common pattern is opening a GUI when a player runs a command. This command is registered as `/exampleplugin settings`:
 
 ```kotlin
-package net.trilleo.mc.plugins.trihunt.commands
+package com.example.exampleplugin.commands
 
-import net.trilleo.mc.plugins.trihunt.registration.GUIManager
-import net.trilleo.mc.plugins.trihunt.registration.PluginCommand
+import com.example.exampleplugin.registration.GUIManager
+import com.example.exampleplugin.registration.PluginCommand
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class SettingsCommand : PluginCommand(
     name = "settings",
     description = "Open the settings menu",
-    permission = "trihunt.settings"
+    permission = "exampleplugin.settings"
 ) {
     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
         if (sender !is Player) {

@@ -1,4 +1,4 @@
-package net.trilleo.mc.plugins.trihunt.registration
+package com.example.exampleplugin.registration
 
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 object ListenerRegistrar {
 
-    private const val LISTENERS_PACKAGE = "net.trilleo.mc.plugins.trihunt.listeners"
+    private const val LISTENERS_PACKAGE = "com.example.exampleplugin.listeners"
 
     /**
      * Scans the listeners package, instantiates every [Listener] found,

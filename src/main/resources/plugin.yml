@@ -1,11 +1,11 @@
-name: TriHunt
-main: net.trilleo.mc.plugins.trihunt.Main
+name: ExamplePlugin
+main: com.example.exampleplugin.Main
 version: 0.1.0
 api-version: 1.21
 
 commands:
-  trihunt:
-    description: Main command for the TriHunt plugin
-    usage: /trihunt <subcommand> [args]
+  exampleplugin:
+    description: Main command for the ExamplePlugin plugin
+    usage: /exampleplugin <subcommand> [args]
     aliases:
-      - th
+      - ep
