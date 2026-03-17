@@ -46,3 +46,15 @@ tasks.jar {
         attributes["paperweight-mappings-namespace"] = "spigot"
     }
 }
+
+tasks.register<Copy>("copyPlugin") {
+    dependsOn("jar")
+    from(tasks.jar.get().archiveFile)
+    into("E:\\Minecraft Dev\\Plugins Dev\\Test Paper Server\\plugins")
+}
+
+tasks.register<JavaExec>("startServer") {
+    dependsOn("copyPlugin")
+    workingDir("E:\\Minecraft Dev\\Plugins Dev\\Test Paper Server")
+    classpath("E:\\Minecraft Dev\\Plugins Dev\\Test Paper Server\\paper-1.21.11.jar")
+}
