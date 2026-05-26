@@ -53,7 +53,7 @@ object LoreUtil {
 
         for (segment in segments) {
             if (segment.isEmpty()) {
-                result.add(buildLoreLine(emptyList(), carryOverStyle))
+                result.add(buildLoreLine(emptyList()))
                 continue
             }
 
@@ -64,7 +64,7 @@ object LoreUtil {
             val wrappedLines = wrapStyledChars(styledChars, maxWidth)
 
             for (line in wrappedLines) {
-                result.add(buildLoreLine(line, carryOverStyle))
+                result.add(buildLoreLine(line))
                 if (line.isNotEmpty()) {
                     carryOverStyle = line.last().style
                 }
@@ -193,7 +193,7 @@ object LoreUtil {
      * Builds a single lore line [Component] from styled characters,
      * prefixed with a reset to override Minecraft's default lore styling.
      */
-    private fun buildLoreLine(chars: List<StyledChar>, @Suppress("UNUSED_PARAMETER") carryOverStyle: Style): Component {
+    private fun buildLoreLine(chars: List<StyledChar>): Component {
         if (chars.isEmpty()) {
             return Component.empty().style(Style.style().decoration(TextDecoration.ITALIC, false).build())
         }
