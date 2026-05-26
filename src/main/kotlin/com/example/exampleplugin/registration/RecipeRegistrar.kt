@@ -1,7 +1,5 @@
 package com.example.exampleplugin.registration
 
-import com.example.exampleplugin.registration.RecipeRegistrar.registerAll
-import com.example.exampleplugin.registration.RecipeRegistrar.unregisterAll
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.NamespacedKey

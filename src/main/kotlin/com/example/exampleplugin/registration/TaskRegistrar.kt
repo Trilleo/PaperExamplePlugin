@@ -1,7 +1,5 @@
 package com.example.exampleplugin.registration
 
-import com.example.exampleplugin.registration.TaskRegistrar.registerAll
-import com.example.exampleplugin.registration.TaskRegistrar.unregisterAll
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
