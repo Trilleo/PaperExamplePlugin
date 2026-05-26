@@ -195,8 +195,7 @@ class ReloadCommand(private val plugin: JavaPlugin) : PluginCommand(
 
 ### Example (Main Command)
 
-Set `isMainCommand = true` to register a standalone top-level command.
-This command is registered as `/globaltool`:
+Set `isMainCommand = true` to register a standalone top-level command. This command is registered as `/globaltool`:
 
 ```kotlin
 package com.example.exampleplugin.commands
@@ -417,8 +416,8 @@ For example, a 6-row GUI provides 45 content slots per page (rows 1–5).
 | `onContentClick` | Both   | No       | Handle clicks on content slots (clicks are cancelled by default) |
 
 You do **not** need to override `setup`, `onClick`, or `onClose` — `PagedPluginGUI` handles them internally for
-pagination. If you need custom close logic, override `onClose` and call `super.onClose(event)` to ensure page state
-is cleaned up.
+pagination. If you need custom close logic, override `onClose` and call `super.onClose(event)` to ensure page state is
+cleaned up.
 
 ### Navigation Layout
 
@@ -466,8 +465,8 @@ class RewardsGUI : PagedPluginGUI(
 
 ### Example (SET mode)
 
-Use `PagedGUIMode.SET` when you need precise control over which slot on which page each item appears in. The outer
-map key is the **zero-based page index**; the inner map key is the **zero-based content-slot index** (0–
+Use `PagedGUIMode.SET` when you need precise control over which slot on which page each item appears in. The outer map
+key is the **zero-based page index**; the inner map key is the **zero-based content-slot index** (0–
 `contentSlots - 1`).
 
 ```kotlin
@@ -532,9 +531,9 @@ class RewardsCommand : PluginCommand(
 
 ## Tasks
 
-To create a scheduled task, extend `PluginTask` and place the class anywhere inside the `tasks` package or a
-subpackage. The task is automatically discovered, instantiated, and scheduled by `TaskRegistrar` when the plugin
-enables. All tasks are cancelled automatically when the plugin disables.
+To create a scheduled task, extend `PluginTask` and place the class anywhere inside the `tasks` package or a subpackage.
+The task is automatically discovered, instantiated, and scheduled by `TaskRegistrar` when the plugin enables. All tasks
+are cancelled automatically when the plugin disables.
 
 ### PluginTask Properties
 
@@ -752,9 +751,9 @@ player.inventory.addItem(item.create())
 
 ## Recipes
 
-To create a recipe, extend `PluginRecipe` and place the class anywhere inside the `recipes` package or a subpackage.
-The recipe is automatically discovered by `RecipeRegistrar` at startup, built, and registered with the server. All
-Minecraft crafting containers are supported — the container type is determined by the
+To create a recipe, extend `PluginRecipe` and place the class anywhere inside the `recipes` package or a subpackage. The
+recipe is automatically discovered by `RecipeRegistrar` at startup, built, and registered with the server. All Minecraft
+crafting containers are supported — the container type is determined by the
 [`Recipe`](https://jd.papermc.io/paper/1.21/) subtype returned by `build`.
 
 All registered recipes are removed cleanly when the plugin disables (via `RecipeRegistrar.unregisterAll`), preventing
@@ -901,8 +900,8 @@ class ExcaliburUpgradeRecipe : PluginRecipe("excalibur_upgrade") {
 ## Adventure Library
 
 Paper bundles the [Kyori Adventure](https://docs.advntr.dev/) library, so no extra dependency is required. Adventure
-replaces the legacy Bukkit chat API and provides rich, structured text through immutable `Component` objects, as well
-as APIs for titles, boss bars, sounds, and more.
+replaces the legacy Bukkit chat API and provides rich, structured text through immutable `Component` objects, as well as
+APIs for titles, boss bars, sounds, and more.
 
 ### Component
 
@@ -1046,8 +1045,8 @@ val fancy = Component.text("Important!", NamedTextColor.RED)
 
 ### Style
 
-`Style` bundles a colour, decorations, click event, and hover event into a reusable object. Apply it to a component
-with `.style(Style)` or pass it directly to `Component.text`:
+`Style` bundles a colour, decorations, click event, and hover event into a reusable object. Apply it to a component with
+`.style(Style)` or pass it directly to `Component.text`:
 
 ```kotlin
 import net.kyori.adventure.text.Component
@@ -1192,9 +1191,9 @@ sender.sendMessage(withHover)
 
 ### MiniMessage
 
-[MiniMessage](https://docs.advntr.dev/minimessage/index.html) is a string-based format that lets you express rich
-text with lightweight tags. The `ItemStack` DSL uses it internally, and you can use it anywhere you need to parse
-user-facing strings (e.g. from `config.yml`) into `Component` objects.
+[MiniMessage](https://docs.advntr.dev/minimessage/index.html) is a string-based format that lets you express rich text
+with lightweight tags. The `ItemStack` DSL uses it internally, and you can use it anywhere you need to parse user-facing
+strings (e.g. from `config.yml`) into `Component` objects.
 
 ```kotlin
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -1420,8 +1419,8 @@ player.sendPlayerListHeaderAndFooter(Component.empty(), Component.empty())
 
 ## Utilities
 
-The `utils` package (`com.example.exampleplugin.utils`) contains helper classes and functions that reduce
-boilerplate across the plugin. See the [Utility Guide](UTILITY_GUIDE.md) for full documentation on the
+The `utils` package (`com.example.exampleplugin.utils`) contains helper classes and functions that reduce boilerplate
+across the plugin. See the [Utility Guide](UTILITY_GUIDE.md) for full documentation on the
 `itemStack` DSL builder and `CountdownUtil`.
 
 ### Enums
@@ -1498,8 +1497,8 @@ message-prefix: "[ExamplePlugin]"
 
 ### Typed Getters
 
-`PluginConfig` provides the following typed getter methods. Each method accepts a YAML path and a default value that
-is returned when the key is absent or has the wrong type:
+`PluginConfig` provides the following typed getter methods. Each method accepts a YAML path and a default value that is
+returned when the key is absent or has the wrong type:
 
 | Method          | Signature                           | Description                                       |
 |:----------------|:------------------------------------|:--------------------------------------------------|
@@ -1512,8 +1511,8 @@ is returned when the key is absent or has the wrong type:
 
 ### Reloading
 
-Call `reload()` to re-read `config.yml` from disk without restarting the server. The method copies any new default
-keys into the file, saves it, and refreshes the in-memory values:
+Call `reload()` to re-read `config.yml` from disk without restarting the server. The method copies any new default keys
+into the file, saves it, and refreshes the in-memory values:
 
 ```kotlin
 pluginConfig.reload()
@@ -1628,8 +1627,8 @@ class MyPlayerData(uuid: UUID) : PlayerData(uuid) {
 }
 ```
 
-Register the factory **before** `PlayerDataManager.init` is called (i.e. before it is called in `Main.onEnable`).
-The best place to do this is at the top of `onEnable`, before the call chain reaches the data manager:
+Register the factory **before** `PlayerDataManager.init` is called (i.e. before it is called in `Main.onEnable`). The
+best place to do this is at the top of `onEnable`, before the call chain reaches the data manager:
 
 ```kotlin
 override fun onEnable() {
