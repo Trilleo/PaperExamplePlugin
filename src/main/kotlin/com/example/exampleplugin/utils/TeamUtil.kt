@@ -1,8 +1,6 @@
 package com.example.exampleplugin.utils
 
 import com.example.exampleplugin.data.ServerDataManager
-import com.example.exampleplugin.utils.TeamUtil.addPlayer
-import com.example.exampleplugin.utils.TeamUtil.invalidateCache
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import net.kyori.adventure.text.minimessage.MiniMessage

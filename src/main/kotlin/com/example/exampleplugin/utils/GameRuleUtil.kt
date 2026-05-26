@@ -1,6 +1,5 @@
 package com.example.exampleplugin.utils
 
-import com.example.exampleplugin.utils.GameRuleUtil.toggle
 import org.bukkit.GameRule
 import org.bukkit.World
 

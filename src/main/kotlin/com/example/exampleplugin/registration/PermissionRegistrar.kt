@@ -1,6 +1,5 @@
 package com.example.exampleplugin.registration
 
-import com.example.exampleplugin.registration.PermissionRegistrar.registerAll
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
 import org.bukkit.plugin.java.JavaPlugin

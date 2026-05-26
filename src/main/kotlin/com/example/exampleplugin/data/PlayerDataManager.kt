@@ -1,7 +1,5 @@
 package com.example.exampleplugin.data
 
-import com.example.exampleplugin.data.PlayerDataManager.get
-import com.example.exampleplugin.data.PlayerDataManager.init
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import org.bukkit.entity.Player
