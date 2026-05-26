@@ -12,6 +12,7 @@ reduce boilerplate and provide commonly needed functionality out of the box.
 | `MessageUtil`   | Prefix-decorated message sender for players                        |
 | `PDCUtil`       | Persistent data container helpers for Entity, Chunk, and ItemStack |
 | `GameRuleUtil`  | Convenient get, set, and toggle helpers for Minecraft game rules   |
+| `LoreUtil`      | Word-aware text wrapping for item lore with style carry-over       |
 
 ---
 
@@ -632,5 +633,76 @@ fun onToggleKeepInventory(world: org.bukkit.World) {
     println("keep-inventory is now $newState")
 }
 ```
+
+---
+
+## LoreUtil
+
+`LoreUtil` wraps a single MiniMessage-formatted string into multiple lore-ready `Component` lines,
+respecting word boundaries, a configurable character width, and automatic style carry-over. Each
+output line is prefixed with an italic-reset so Minecraft's default purple italic lore styling is
+neutralized.
+
+### Usage
+
+```kotlin
+import com.example.exampleplugin.utils.LoreUtil
+
+// Basic wrapping (default 40 visible characters per line)
+val lines = LoreUtil.wrapLore("<gray>This legendary blade was forged in the fires of Mount Doom and carries the power of a thousand suns.")
+
+// Custom width
+val narrow = LoreUtil.wrapLore("<red>Warning: <white>This item is extremely dangerous.", maxWidth = 30)
+```
+
+### Explicit Newlines
+
+Use `\n` or `<newline>` to force line breaks. Each segment is wrapped independently:
+
+```kotlin
+val lines = LoreUtil.wrapLore("<gray>Line one\nLine two<newline>Line three")
+// Produces 3 lines (assuming each fits within maxWidth)
+```
+
+### Style Carry-Over
+
+Colors and decorations carry over to subsequent wrapped lines automatically:
+
+```kotlin
+val lines = LoreUtil.wrapLore("<red><bold>This long red bold text will wrap and the second line will still be red and bold.")
+// Both lines are rendered in red bold
+```
+
+### Integration with ItemStack DSL
+
+Pass the result directly to the `lore()` builder method using a `meta` escape hatch, or use the
+spread operator:
+
+```kotlin
+import com.example.exampleplugin.utils.LoreUtil
+import com.example.exampleplugin.utils.itemStack
+
+val item = itemStack(Material.DIAMOND_SWORD) {
+    name("<bold><gold>Excalibur</gold></bold>")
+    meta {
+        lore(LoreUtil.wrapLore("<gray>A legendary blade forged in ancient fires, granting its wielder unmatched power."))
+    }
+}
+```
+
+### Parameters
+
+| Parameter  | Type     | Default | Description                              |
+|:-----------|:---------|:--------|:-----------------------------------------|
+| `text`     | `String` | —       | MiniMessage-formatted input string       |
+| `maxWidth` | `Int`    | `40`    | Maximum visible characters per line      |
+
+### Behavior Details
+
+- **Word-aware**: Lines break at word boundaries (spaces). A word that exceeds `maxWidth` alone is force-broken mid-word.
+- **Visible text only**: MiniMessage tags (`<red>`, `<bold>`, etc.) do not count toward the width.
+- **Style inheritance**: The style active at the end of one line is inherited by the next.
+- **Italic reset**: Every output line has `italic=false` set on its root style to override Minecraft's default lore rendering.
+- **Empty input**: Returns an empty list.
 
 ---

@@ -36,6 +36,9 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
+    testImplementation("net.kyori:adventure-api:4.21.0")
+    testImplementation("net.kyori:adventure-text-minimessage:4.21.0")
+    testImplementation("net.kyori:adventure-text-serializer-plain:4.21.0")
 }
 
 tasks.processResources {
